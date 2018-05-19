@@ -8,8 +8,18 @@ const Sequelize = require('sequelize');
 //Para usar Heroku Postgres data base;
 // DATABASE_URL = postgres://user:passwd@host:port/database
 
+
+
 const url = process.env.DATABASE_URL || "sqlite:quiz.sqlite";
 
+if(url === process.env.DATABASE_URL){
+    console.log("Uso pg");
+}
+
+
+if(url === "sqlite:quiz.sqlite"){
+    console.log("uso sqlite");
+}
 const sequelize = new Sequelize(url);
 
 // Import the definition of the Quiz Table from quiz.js
