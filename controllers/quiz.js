@@ -60,7 +60,10 @@ exports.create = (req, res, next) => {
 
     // Saves only the fields question and answer into the DDBB
     quiz.save({fields: ["question", "answer"]})
-    .then(quiz => res.redirect('/quizzes/' + quiz.id))
+    .then(() => {
+        req.flash('success', 'Quiz borrado satisfacotriamente');
+        res.redirect('/quizzes');
+    })
     .catch(Sequelize.ValidationError, error => {
         console.log('There are errors in the form:');
         error.errors.forEach(({message}) => console.log(message));
@@ -88,13 +91,19 @@ exports.update = (req, res, next) => {
     quiz.answer = body.answer;
 
     quiz.save({fields: ["question", "answer"]})
-    .then(quiz => res.redirect('/quizzes/' + quiz.id))
+    .then( quiz => {
+        req.flash('success', 'Quiz editado satisfactoriamente');
+        res.redirect('/quizzes/' + quiz.id);
+    })
     .catch(Sequelize.ValidationError, error => {
-        console.log('There are errors in the form:');
-        error.errors.forEach(({message}) => console.log(message));
+        req.flash('error', 'Hay errores en el formulario:');
+        error.errors.forEach(({message}) => req.flash('error', message));
         res.render('quizzes/edit', {quiz});
     })
-    .catch(error => next(error));
+    .catch(error =>{
+        req.flash('error', 'Error editando el quiz: ' + error.message);
+        next(error);
+    });
 };
 
 
@@ -102,8 +111,16 @@ exports.update = (req, res, next) => {
 exports.destroy = (req, res, next) => {
 
     req.quiz.destroy()
-    .then(() => res.redirect('/quizzes'))
-    .catch(error => next(error));
+    .then(() => {
+        req.flash('success', 'Quiz borrado satisfacotriamente');
+        res.redirect('/quizzes');
+    })
+
+    .catch(error =>{ 
+        req.flash('error', 'Error borrando el quiz:' + error.message);
+        next(error);
+    
+    });
 };
 
 

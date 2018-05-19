@@ -4,12 +4,33 @@ var favicon = require('serve-favicon');
 var logger = require('morgan');
 var cookieParser = require('cookie-parser');
 var bodyParser = require('body-parser');
+var session = require('express-session');
+var SequelizeStore = require('connect-session-sequelize')(session.Store);
 var partials = require('express-partials');
+var flash = require('express-flash');
 var methodOverride = require('method-override');
 
 var index = require('./routes/index');
 
 var app = express();
+
+//Configuración de sesiones para su almacenamiento en la BD con Sequelize
+
+var sequelize = require("./models");
+var sessionStore = new SequelizeStore({
+  db: sequelize,
+  table: "session",
+  checkExpirationInterval: 15*60*1000,
+  expiration: 4*60*60*1000 //4 horas como máximo de sesión abierta
+});
+
+app.use(session({
+  secret: "Quiz 2018",
+  store: sessionStore,
+  resave: false,
+  saveUninitialized:true
+}));
+
 
 // view engine setup
 app.set('views', path.join(__dirname, 'views'));
@@ -24,6 +45,7 @@ app.use(cookieParser());
 app.use(methodOverride('_method', {methods: ["POST", "GET"]}));
 app.use(express.static(path.join(__dirname, 'public')));
 app.use(partials());
+app.use(flash());
 
 app.use('/', index);
 

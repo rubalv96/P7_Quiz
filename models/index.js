@@ -9,7 +9,8 @@ const sequelize = new Sequelize("sqlite:quiz.sqlite");
 // Import the definition of the Quiz Table from quiz.js
 sequelize.import(path.join(__dirname, 'quiz'));
 
-
+//Importamos la definicion de sesiones (la tabla)
+sequelize.import(path.join(__dirname,'session'));
 // Create tables
 sequelize.sync()
 .then(() => console.log('Data Bases created successfully'))
