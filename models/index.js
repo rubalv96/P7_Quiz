@@ -9,6 +9,7 @@ const Sequelize = require('sequelize');
 // DATABASE_URL = postgres://user:passwd@host:port/database
 
 const url = process.env.DATABASE_URL || "sqlite:quiz.sqlite";
+
 const sequelize = new Sequelize(url);
 
 // Import the definition of the Quiz Table from quiz.js
